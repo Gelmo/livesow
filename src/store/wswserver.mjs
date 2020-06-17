@@ -177,6 +177,7 @@ export class WswServer extends EventEmitter{
       this.parseInfoInt(info, 'sv_pure');
       this.parseInfoInt(info, 'sv_skilllevel');
       this.parseInfoInt(info, 'sv_skillRating');
+      this.parseInfoInt(info, 'bots');
       this.parseInfoInt(info, 'clients');
       this.parseInfoInt(info, 'tv');
       this.parseInfoInt(info, 'sv_livesow_interval');
