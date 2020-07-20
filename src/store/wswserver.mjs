@@ -25,6 +25,9 @@ const INTERVAL_EMPTY =     10000;
 const INTERVAL_NOPING =    5000;
 const INTERVAL_POPULATED = 1000;
 
+const ATTEMPT_MAX = 5;
+const ATTEMPT_DELAY = 1000;
+
 export class WswServer extends EventEmitter{
     constructor(family, ip, port) {
       super();
@@ -36,6 +39,7 @@ export class WswServer extends EventEmitter{
       this.players = new Set();
 
       this.active = false;
+      this.attempts = 0;
 
       this.region = '';
       this.country = '';
@@ -53,20 +57,26 @@ export class WswServer extends EventEmitter{
       );
 
       if (!msg) {
-        if (this.active) {
-          this.players.clear();
+        this.attempts++;
+        if ( this.attempts >= ATTEMPT_MAX ) {
+          if (this.active) {
+            this.players.clear();
 
-          WswPlayer.pruneGhostsForServer(this, (player, changes) => {
-            this.emit('playerDelete', this, player, changes);
-          });
+            WswPlayer.pruneGhostsForServer(this, (player, changes) => {
+              this.emit('playerDelete', this, player, changes);
+            });
 
-          this.emit('serverDelete', this, {id: this.id});
+            this.emit('serverDelete', this, {id: this.id});
+          }
+          this.active = false;
+          WswServer.delete(this);
+        } else {
+          setTimeout(() => this.sendRequest(), ATTEMPT_DELAY );
         }
-        this.active = false;
-        WswServer.delete(this);
         return;
       }
 
+      this.attempts = 0;
       this.handleResponse(msg.toString('utf8', REQUESTHEADER.length));
     }
 
