@@ -6,12 +6,12 @@
 import { LZString } from './lib/lzstring.mjs';
 import { createUuid } from './lib/uuid.mjs';
 import { createLogger } from './lib/logger.mjs';
-import { WswMaster } from './store/wswmaster.mjs';
-import { WswServer } from './store/wswserver.mjs';
-import { WswPlayer } from './store/wswplayer.mjs';
+import { WfMaster } from './store/wfmaster.mjs';
+import { WfServer } from './store/wfserver.mjs';
+import { WfPlayer } from './store/wfplayer.mjs';
 import { Action } from './store/eventlog.mjs';
 
-const logger = createLogger('Livesow');
+const logger = createLogger('Livefork');
 
 const DEFAULT_INTERVAL = 1000;
 const MIN_INTERVAL = 1000;
@@ -54,7 +54,7 @@ class Client {
     if (!this.ready) {
       return;
     }
-    this.sendMessage('UPDATE', livesowGetUpdate(this));
+    this.sendMessage('UPDATE', liveforkGetUpdate(this));
 
     this.setInterval();
   }
@@ -110,7 +110,7 @@ function handleMessage(client, msg) {
     logger.log(`Client ${client} is ready`);
     client.ready = true;
     client.timeOffset = Date.now() - (time||Date.now());
-    client.sendMessage('INIT', livesowGetInit());
+    client.sendMessage('INIT', liveforkGetInit());
     client.lastAction = Action.getLastAction();
     client.setInterval();
     return;
@@ -134,11 +134,11 @@ function handleMessage(client, msg) {
 }
 
 /*
-* LiveSow
+* LiveFork
 */
 
-export function initializeLivesow() {
-  const master = new WswMaster();
+export function initializeLivefork() {
+  const master = new WfMaster();
   master.on('foundServer', (server) => {
     // logger.log(`Found server [${server.ip}:${server.port}]`);
   });
@@ -168,14 +168,14 @@ export function initializeLivesow() {
   });
 }
 
-function livesowGetInit() {
+function liveforkGetInit() {
   return {
-    servers: WswServer.getAllActive(),
-    players: WswPlayer.getAllActive(),
+    servers: WfServer.getAllActive(),
+    players: WfPlayer.getAllActive(),
   }
 }
 
-function livesowGetUpdate(client) {
+function liveforkGetUpdate(client) {
   let actions;
   [actions, client.lastAction] = Action.getFrom(client.lastAction);
 
@@ -196,4 +196,4 @@ function purgeWhenIdle() {
 
 // maybe this should be called when site is done loading
 // but i'm not sure where that is.
-// initializeLivesow();
+// initializeLivefork();

@@ -7,10 +7,10 @@ import EventEmitter from 'events';
 import { createLogger } from '../lib/logger.mjs';
 import { udpRequest, resolveDnsMultiple } from '../lib/udputils.mjs';
 
-import { WswServer } from './wswserver.mjs';
+import { WfServer } from './wfserver.mjs';
 import { multiUdpRequest } from '../lib/udputils.mjs';
 
-const logger = createLogger('WswMaster');
+const logger = createLogger('WfMaster');
 
 const IGNORE_UDP6 = true;
 const MASTER_INTERVAL = 60000;
@@ -31,19 +31,14 @@ const TYPE_TOKEN = {
   'udp6': '/',
 };
 
-export class WswMaster extends EventEmitter {
+export class WfMaster extends EventEmitter {
   constructor() {
     super();
 
     this.masterServers = [
-      // { host: 'master1.forbidden.gg', port: 27950 },
+      { host: 'master1.forbidden.gg', port: 27950 },
       { host: 'master1.icy.gg', port: 27950 },
-      { host: '107.161.23.68', port: 27950 },
       // { host: 'dpmaster.deathmask.net', port: 27950 },
-      // { host: 'ghdigital.com', port: 27950 },
-      // { host: 'excalibur.nvg.ntnu.no', port: 27950 },
-      // { host: 'eu.master.warsow.gg', port: 27950 },
-      // { host: 'eu.master.warow.gg', port: 27950 },
     ];
 
     this.protocols = [
@@ -118,7 +113,7 @@ export class WswMaster extends EventEmitter {
     
           this.emit('foundServer', {ip: ip, port: port});
     
-          WswServer.getOrCreate(family, ip, port, (server) => {
+          WfServer.getOrCreate(family, ip, port, (server) => {
             server.on('serverAdd', (server, changes) => {
               this.emit('serverAdd', server, changes);
             });
@@ -187,7 +182,7 @@ export class WswMaster extends EventEmitter {
 
       this.emit('foundServer', {ip: ip, port: port});
 
-      WswServer.getOrCreate(family, ip, port, (server) => {
+      WfServer.getOrCreate(family, ip, port, (server) => {
         server.on('serverAdd', (server, changes) => {
           this.emit('serverAdd', server, changes);
         });

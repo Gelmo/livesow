@@ -7,7 +7,7 @@ import EventEmitter from 'events';
 import { createUuid } from '../lib/uuid.mjs';
 import { udpRequest } from '../lib/udputils.mjs';
 import { geoLocateRegion } from '../lib/geolocate.mjs';
-import { WswPlayer } from './wswplayer.mjs';
+import { WfPlayer } from './wfplayer.mjs';
 
 const servers = new Set();
 const changes = new Set();
@@ -28,7 +28,7 @@ const INTERVAL_POPULATED = 1000;
 const ATTEMPT_MAX = 5;
 const ATTEMPT_DELAY = 1000;
 
-export class WswServer extends EventEmitter{
+export class WfServer extends EventEmitter{
     constructor(family, ip, port) {
       super();
 
@@ -62,14 +62,14 @@ export class WswServer extends EventEmitter{
           if (this.active) {
             this.players.clear();
 
-            WswPlayer.pruneGhostsForServer(this, (player, changes) => {
+            WfPlayer.pruneGhostsForServer(this, (player, changes) => {
               this.emit('playerDelete', this, player, changes);
             });
 
             this.emit('serverDelete', this, {id: this.id});
           }
           this.active = false;
-          WswServer.delete(this);
+          WfServer.delete(this);
         } else {
           setTimeout(() => this.sendRequest(), ATTEMPT_DELAY );
         }
@@ -131,7 +131,7 @@ export class WswServer extends EventEmitter{
         const team  = parseInt(playerArr[3]);
 
         totalPing += ping;
-        const player = WswPlayer.getOrCreateOrUpdate(this, name, score, team, ping,
+        const player = WfPlayer.getOrCreateOrUpdate(this, name, score, team, ping,
           (player, changes) => {
             this.emit('playerAdd', this, player, changes);
           },
@@ -143,7 +143,7 @@ export class WswServer extends EventEmitter{
         this.players.add(player);
       });
 
-      WswPlayer.pruneGhostsForServer(this, (player, changes) => {
+      WfPlayer.pruneGhostsForServer(this, (player, changes) => {
         this.emit('playerDelete', this, player, changes);
       });
 
@@ -156,8 +156,8 @@ export class WswServer extends EventEmitter{
         interval = INTERVAL_EMPTY;
       }
 
-      if ( this.info.hasOwnProperty('sv_livesow_interval') && !isNaN(this.info.sv_livesow_interval) ) {
-        interval = Math.max(interval, this.info.sv_livesow_interval);
+      if ( this.info.hasOwnProperty('sv_livefork_interval') && !isNaN(this.info.sv_livefork_interval) ) {
+        interval = Math.max(interval, this.info.sv_livefork_interval);
       }
 
       setTimeout( () => {
@@ -190,7 +190,7 @@ export class WswServer extends EventEmitter{
       this.parseInfoInt(info, 'bots');
       this.parseInfoInt(info, 'clients');
       this.parseInfoInt(info, 'tv');
-      this.parseInfoInt(info, 'sv_livesow_interval');
+      this.parseInfoInt(info, 'sv_livefork_interval');
 
       if (!info.hasOwnProperty('g_race_gametype')) {
         info.race = ~~(info.hasOwnProperty('gametype') && info.gametype.includes('race'));
@@ -230,7 +230,7 @@ export class WswServer extends EventEmitter{
     }
 
     addPlayer(name) {
-      const player = WswPlayer.create(this, name);
+      const player = WfPlayer.create(this, name);
       return player;
     }
 
@@ -241,9 +241,9 @@ export class WswServer extends EventEmitter{
     }
 
     static getOrCreate(family, ip, port, onCreated) {
-      let server = WswServer.getByIp(family, ip, port);
+      let server = WfServer.getByIp(family, ip, port);
       if (!server) {
-        server = new WswServer(family, ip, port);
+        server = new WfServer(family, ip, port);
         servers.add(server);
         onCreated(server);
       }

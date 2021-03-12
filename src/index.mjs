@@ -4,7 +4,7 @@
  */
 
 import WebSocket from 'ws';
-import { initializeLivesow, acceptConnection } from './livesow.mjs';
+import { initializeLivefork, acceptConnection } from './livefork.mjs';
 
 const wss = new WebSocket.Server({
   port: 1337,
@@ -12,4 +12,4 @@ const wss = new WebSocket.Server({
 
 wss.on('connection', acceptConnection);
 
-initializeLivesow();
+initializeLivefork();

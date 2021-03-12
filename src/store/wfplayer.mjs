@@ -5,11 +5,11 @@
 
 import { createUuid } from '../lib/uuid.mjs';
 import { createLogger } from '../lib/logger.mjs';
-const logger = createLogger('WswPlayer');
+const logger = createLogger('WfPlayer');
 
 const players = new Set();
 
-export class WswPlayer {
+export class WfPlayer {
     constructor(server, name, score, team, ping) {
       this.id = createUuid();
       this.server = server;
@@ -24,9 +24,9 @@ export class WswPlayer {
     }
 
     static getOrCreateOrUpdate(server, name, score, team, ping, onCreated, onUpdate) {
-      let player = WswPlayer.getByServerName(server, name);
+      let player = WfPlayer.getByServerName(server, name);
       if (!player) {
-        player = new WswPlayer(server, name, score, team, ping);
+        player = new WfPlayer(server, name, score, team, ping);
         players.add(player);
         onCreated(player, {
           id: player.id,
@@ -79,7 +79,7 @@ export class WswPlayer {
           if (!server.getPlayerByName(player.name)) {
             const changes = {id: player.id};
             onPruned(player, changes);
-            WswPlayer.delete(player);
+            WfPlayer.delete(player);
           }
         }
       });
