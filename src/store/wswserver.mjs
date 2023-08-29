@@ -102,7 +102,7 @@ export class WswServer extends EventEmitter{
         region: this.region,
       };
 
-      for (let i = 0; i < infoArr.length; i+=2) {
+      for (let i = 0; i < infoArr.length-1; i+=2) {
         info[infoArr[i]] = infoArr[i+1].trim();
       }
 
