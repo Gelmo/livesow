@@ -107,6 +107,21 @@ export class WswServer extends EventEmitter{
       }
 
       info = this.processInfo(info);
+
+      let totalPing = 0;
+      playerStrings.pop();
+
+      // search for "client bots" (0 ping) in advance, i guess
+      let numClientBots = 0;
+      playerStrings.forEach( (playerString) => {
+        let playerArr = playerString.match(TOKENIZE_REGEX);
+        const ping  = parseInt(playerArr[1]);
+        if (ping == 0 ) {
+          numClientBots++;
+        }
+      });
+      info.bots = ( info.bots || 0 ) + numClientBots;
+        
       const isNew = !this.info;
       if (isNew) {
         this.emit('serverAdd', this, info);
@@ -117,9 +132,6 @@ export class WswServer extends EventEmitter{
         }
       }
       this.info = info;
-
-      let totalPing = 0;
-      playerStrings.pop();
 
       this.players.clear();
       playerStrings.forEach( (playerString) => {
