@@ -46,7 +46,7 @@ export class WfMaster extends EventEmitter {
     ];
 
     this.protocols = [
-      '22',
+      '25',
     ];
 
     this.changes = new Set();
