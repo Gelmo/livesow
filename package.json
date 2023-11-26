@@ -10,6 +10,6 @@
   "author": "",
   "license": "GPL-2.0-or-later",
   "dependencies": {
-    "ws": "^7.1.1"
+    "ws": "^7.5.9"
   }
 }
