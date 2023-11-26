@@ -37,7 +37,11 @@ export class WfMaster extends EventEmitter {
 
     this.masterServers = [
       { host: 'master1.forbidden.gg', port: 27950 },
+      { host: 'master2.forbidden.gg', port: 27777 },
+      { host: 'master3.forbidden.gg', port: 42863 },
       { host: 'master1.icy.gg', port: 27950 },
+      { host: 'master2.icy.gg', port: 27777 },
+      { host: 'master3.icy.gg', port: 42863 },
       // { host: 'dpmaster.deathmask.net', port: 27950 },
     ];
 
